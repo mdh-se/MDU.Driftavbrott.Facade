@@ -1,0 +1,1 @@
+buildNuGetPackageNetCore(runUnitTests: true)
