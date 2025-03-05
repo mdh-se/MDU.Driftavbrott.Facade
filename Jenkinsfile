@@ -1,1 +1,1 @@
-buildNuGetPackageNetCore(runUnitTests: true)
+mduBuildDotnet()
