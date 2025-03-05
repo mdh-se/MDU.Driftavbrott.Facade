@@ -1,1 +1,13 @@
-global using Microsoft.VisualStudio.TestTools.UnitTesting;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Logging;
+global using Moq;
+global using NLog;
+global using NLog.Extensions.Logging;
+global using NLog.Targets;
+global using SE.MDU.Driftavbrott.Facade.Configuration;
+global using SE.MDU.Driftavbrott.Facade.Events;
+global using SE.MDU.Driftavbrott.Facade.Interfaces;
+global using SE.MDU.Driftavbrott.Modell;
+global using Xunit;
