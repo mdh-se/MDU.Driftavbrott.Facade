@@ -44,7 +44,7 @@ public class DriftavbrottFacade : IDriftavbrottFacade
         _cancellationToken = _monitorCancellationTokenSource.Token;
         _settings = config.Value;
         _logger = logger;
-        _logger.Info($"Startar DriftavbrottFacade med konfiguration: Url:'{_settings.Url}', Kanaler:'{string.Join(",",_settings.Kanaler)}', System: '{_settings.System}'");
+        _logger.Info($"Startar DriftavbrottFacade med konfiguration: Url:'{_settings.Url}', Kanaler:'{string.Join(",",_settings.Kanaler)}', System:'{_settings.System}'");
         _driftavbrottMonitor = new DriftavbrottMonitor(this, _logger);
         _driftavbrottMonitor.DriftavbrottChanged += (sender, @event) =>
         {
@@ -61,7 +61,15 @@ public class DriftavbrottFacade : IDriftavbrottFacade
     /// </summary>
     public void StartDriftavbrottMonitor()
     {
-        _driftavbrottMonitorTask = _driftavbrottMonitor.MonitorDriftavbrottAsync(_cancellationToken);
+        if (_driftavbrottMonitorTask == null)
+        {
+            _driftavbrottMonitorTask = _driftavbrottMonitor.MonitorAsync(_cancellationToken);
+        }
+    }
+    
+    public void StopDriftavbrottMonitor()
+    {
+        _monitorCancellationTokenSource.Cancel();
     }
     /// <summary>
     /// Hämtar pågående driftavbrott på de kanaler som anges i konfiguration. Om något annat fel inträffar kastas ett ApplicationException.
@@ -94,7 +102,7 @@ public class DriftavbrottFacade : IDriftavbrottFacade
         try
         {
             // Gör anropet
-            var response = await httpClient.GetAsync("", _cancellationToken);
+            var response = await httpClient.GetAsync("");
 
             // Fick vi något svar alls?
             if (response != null)
@@ -133,8 +141,7 @@ public class DriftavbrottFacade : IDriftavbrottFacade
         }
         catch (Exception e)
         {
-            throw new ApplicationException(
-                $"Driftavbrottstjänsten svarar inte. RequestBaseUrl={baseUri.Uri.PathAndQuery}.", e);
+           _logger.Error($"Driftavbrottstjänsten svarar inte. RequestBaseUrl={baseUri.Uri.PathAndQuery}.", e);
         }
 
         return driftavbrottResult;
@@ -142,15 +149,18 @@ public class DriftavbrottFacade : IDriftavbrottFacade
 
     public void Dispose()
     {
+        _logger.Info("DriftavbrottMonitor stoppas.");
         _monitorCancellationTokenSource.Cancel();
-
         try
         {
-            _driftavbrottMonitorTask?.Wait();
+            while (_driftavbrottMonitorTask is { IsCanceled: false })
+            {
+            }
+
         }
         catch (AggregateException ae)
         {
-            
+            _logger.Warn("Ett fel inträffade vid Dispose.",ae);
         }
         finally
         {

@@ -77,6 +77,7 @@ public class DriftavbrottFacadIntegrationTest
         SpinWait.SpinUntil(() => eventsList.Count == 2, TimeSpan.FromSeconds(7));
 
         driftavbrottFacade.Dispose();
+        Thread.Sleep(TimeSpan.FromSeconds(3));
         
         // verify
         // att vi har fått 1 event med rätt typ

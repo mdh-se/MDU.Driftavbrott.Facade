@@ -17,4 +17,5 @@ public interface IDriftavbrottFacade : IDisposable
     Task<IEnumerable<DriftavbrottType>> GetPagaendeDriftavbrottAsync();
 
     public void StartDriftavbrottMonitor();
+    public void StopDriftavbrottMonitor();
 }

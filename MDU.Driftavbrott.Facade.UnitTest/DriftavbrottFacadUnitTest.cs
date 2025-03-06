@@ -40,7 +40,7 @@ public class DriftavbrottFacadUnitTest
         // act
         //Disablar varning här: vi behöver inte await här, vi vill att exekveringen ska fortsätta till SpinWait, annars fortsätter testet in perpetuum.
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-        monitorUnderTest.MonitorDriftavbrottAsync(testToken, 2);
+        monitorUnderTest.MonitorAsync(testToken, 2);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         
         // Vänta 17 sekunder. Vi borde få 1 event under tiden
@@ -85,10 +85,13 @@ public class DriftavbrottFacadUnitTest
 
         // act
         var facade = host.Services.GetRequiredService<IDriftavbrottFacade>();
+        facade.StartDriftavbrottMonitor();
 
         var currentConfig = facade.CurrentConfig;
         
         facade.Dispose();
+
+        //facade.StopDriftavbrottMonitor();
         
         // verify
         Assert.Equal("http://integration-linux-dev.ita.mdh.se:3301/mdh-driftavbrott/v1", currentConfig.Url);

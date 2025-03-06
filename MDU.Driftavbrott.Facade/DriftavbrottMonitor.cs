@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,47 +32,55 @@ public class DriftavbrottMonitor
     
     internal event EventHandler<DriftavbrottEventArgs> DriftavbrottChanged;
     internal event EventHandler<DriftavbrottErrorEventArgs> DriftavbrottError;
-
-
-    internal async Task MonitorDriftavbrottAsync(CancellationToken cancellationToken, int intervalInSeconds = 60)
+    
+    internal async Task MonitorAsync(CancellationToken cancellationToken, int intervalInSeconds = 60)
     {
-        _logger.Info("DriftavbrottMonitor startad.");
-
         DriftavbrottType senasteDriftavbrott = null;
-        while (!cancellationToken.IsCancellationRequested)
+        _logger.Info("DriftavbrottMonitor startad.");
+        try
         {
-            try
+            while (!cancellationToken.IsCancellationRequested)
             {
-                var driftavbrott = await _driftavbrottFacade.GetPagaendeDriftavbrottAsync();
-
-                if (driftavbrott.Any())
+                try
                 {
-                    if (senasteDriftavbrott == null)
+                    IEnumerable<DriftavbrottType> driftavbrott = await _driftavbrottFacade.GetPagaendeDriftavbrottAsync();
+                
+                    if (driftavbrott.Any())
                     {
-                        foreach (DriftavbrottType da in driftavbrott)
+                        if (senasteDriftavbrott == null)
                         {
-                            senasteDriftavbrott = da;
-                            _logger.Info($"Signalerar aktivt driftavbrott för kanal: {da.Kanal}, med meddelande {da.MeddelandeSv}");
-                            var dae = new DriftavbrottEventArgs(DriftavbrottEventArgs.AvbrottStatus.Aktivt, da.MeddelandeSv, da.MeddelandeEn);
-                            DriftavbrottChanged?.Invoke(this, dae);
+                            foreach (DriftavbrottType da in driftavbrott)
+                            {
+                                senasteDriftavbrott = da;
+                                _logger.Info($"Signalerar aktivt driftavbrott för kanal: '{da.Kanal}' med meddelande '{da.MeddelandeSv}'");
+                                var dae = new DriftavbrottEventArgs(DriftavbrottEventArgs.AvbrottStatus.Aktivt, da.MeddelandeSv, da.MeddelandeEn);
+                                DriftavbrottChanged?.Invoke(this, dae);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (senasteDriftavbrott != null)
+                        {
+                            _logger.Info($"Signalerar avslutat driftavbrott för kanal: '{senasteDriftavbrott?.Kanal}' med meddelande '{senasteDriftavbrott?.MeddelandeSv}'");
+                            var dae = new DriftavbrottEventArgs(DriftavbrottEventArgs.AvbrottStatus.Avslutat, senasteDriftavbrott?.MeddelandeSv ?? "avslutat", senasteDriftavbrott?.MeddelandeEn ?? "avslutat");
+                            senasteDriftavbrott = null;
+                            DriftavbrottChanged?.Invoke(_driftavbrottFacade, dae);
                         }
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    _logger.Info($"Signalerar avslutat driftavbrott för kanal: {senasteDriftavbrott.Kanal}, med meddelande {senasteDriftavbrott.MeddelandeSv}");
-                    var dae = new DriftavbrottEventArgs(DriftavbrottEventArgs.AvbrottStatus.Avslutat, senasteDriftavbrott?.MeddelandeSv ?? "avslutat", senasteDriftavbrott?.MeddelandeEn ?? "avslutat");
-                    DriftavbrottChanged?.Invoke(_driftavbrottFacade, dae);
+                    _logger.Error($"Signalerar fel vid kontroll av driftavbrott.",e);
+                    DriftavbrottError?.Invoke(this, new DriftavbrottErrorEventArgs("Ett fel inträffade vid kontroll av driftavbrott.",e));
                 }
+                await Task.Delay(TimeSpan.FromSeconds(intervalInSeconds), cancellationToken);
             }
-            catch (Exception e)
-            {
-                _logger.Error($"Signalerar fel vid kontroll av driftavbrott.",e);
-                DriftavbrottError?.Invoke(this, new DriftavbrottErrorEventArgs("Ett fel inträffade vid kontroll av driftavbrott.",e));
-            }
-            await Task.Delay(TimeSpan.FromSeconds(intervalInSeconds), cancellationToken);
+        }
+        catch (TaskCanceledException tce)
+        {
             _logger.Info("DriftavbrottMonitor stoppad.");
-
+            throw;
         }
     }
 }
