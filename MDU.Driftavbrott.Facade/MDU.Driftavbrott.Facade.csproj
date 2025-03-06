@@ -11,7 +11,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>SE.MDU.Driftavbrott.Facade</RootNamespace>
     <IncludeContentInPack>true</IncludeContentInPack>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <NoWarn>$(NoWarn);NU5128</NoWarn>
