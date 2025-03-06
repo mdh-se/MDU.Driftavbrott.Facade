@@ -26,11 +26,6 @@ driftavbrottFacade.DriftavbrottChanged += (sender, dae) =>
         {
             // Hantera driftavbrott här
         };
-
-driftavbrottFacade.DriftavbrottError += (sender, daerr) =>
-        {
-            // Hantera eventuella felmeddelanden här
-        };
         
 // Starta monitorering
 driftavbrottFacade.StartDriftavbrottMonitor();
