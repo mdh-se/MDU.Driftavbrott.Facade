@@ -31,7 +31,6 @@ public class DriftavbrottMonitor
     }
     
     internal event EventHandler<DriftavbrottEventArgs> DriftavbrottChanged;
-    internal event EventHandler<DriftavbrottErrorEventArgs> DriftavbrottError;
     
     internal async Task MonitorAsync(CancellationToken cancellationToken, int intervalInSeconds = 60)
     {
@@ -72,7 +71,6 @@ public class DriftavbrottMonitor
                 catch (Exception e)
                 {
                     _logger.Error($"Signalerar fel vid kontroll av driftavbrott.",e);
-                    DriftavbrottError?.Invoke(this, new DriftavbrottErrorEventArgs("Ett fel inträffade vid kontroll av driftavbrott.",e));
                 }
                 await Task.Delay(TimeSpan.FromSeconds(intervalInSeconds), cancellationToken);
             }

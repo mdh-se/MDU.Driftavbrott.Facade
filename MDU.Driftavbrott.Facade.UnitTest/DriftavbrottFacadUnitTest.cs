@@ -21,7 +21,6 @@ public class DriftavbrottFacadUnitTest
         DriftavbrottMonitor monitorUnderTest = new DriftavbrottMonitor(mockFacad.Object, NullLogger<DriftavbrottFacade>.Instance);
 
         List<DriftavbrottEventArgs> eventsList = new List<DriftavbrottEventArgs>();
-        List<DriftavbrottErrorEventArgs> errorList = new List<DriftavbrottErrorEventArgs>();
 
        monitorUnderTest.DriftavbrottChanged += MonitorUnderTestOnDriftavbrottChanged;
 
@@ -30,13 +29,6 @@ public class DriftavbrottFacadUnitTest
             eventsList.Add(e);
         }
 
-        monitorUnderTest.DriftavbrottError += MonitorUnderTestOnDriftavbrottError;
-
-        void MonitorUnderTestOnDriftavbrottError(object? sender, DriftavbrottErrorEventArgs e)
-        {
-            errorList.Add(e);
-        }
-        
         // act
         //Disablar varning här: vi behöver inte await här, vi vill att exekveringen ska fortsätta till SpinWait, annars fortsätter testet in perpetuum.
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -44,16 +36,13 @@ public class DriftavbrottFacadUnitTest
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         
         // Vänta 17 sekunder. Vi borde få 1 event under tiden
-        SpinWait.SpinUntil(() => eventsList.Count == 2 && errorList.Count == 1, TimeSpan.FromSeconds(7));
+        SpinWait.SpinUntil(() => eventsList.Count == 2, TimeSpan.FromSeconds(7));
         
         // verify
         // att vi har fått 2 event med rätt AvbrottStatus
         Assert.Collection(eventsList,
             @event => Assert.Equal(DriftavbrottEventArgs.AvbrottStatus.Aktivt, @event.Status),
             @event => Assert.Equal(DriftavbrottEventArgs.AvbrottStatus.Avslutat, @event.Status));
-        
-        Assert.Single(errorList);
-        
     }
     [Fact]
     public void TestFacadeConfiguration()
@@ -91,8 +80,6 @@ public class DriftavbrottFacadUnitTest
         
         facade.Dispose();
 
-        //facade.StopDriftavbrottMonitor();
-        
         // verify
         Assert.Equal("http://integration-linux-dev.ita.mdh.se:3301/mdh-driftavbrott/v1", currentConfig.Url);
         Assert.Equal(new []{"alltid"}, currentConfig.Kanaler);

@@ -33,7 +33,6 @@ public class DriftavbrottFacade : IDriftavbrottFacade
     
     DriftavbrottFacadeSettings IDriftavbrottFacade.CurrentConfig => _settings;
     public event EventHandler<DriftavbrottEventArgs> DriftavbrottChanged;
-    public event EventHandler<DriftavbrottErrorEventArgs> DriftavbrottError;
 
     /// <summary>Konstruktor som även instansierar DriftavbrottsMonitor</summary>
     /// <remarks>Observera att för att prenumerera på Driftavbrott-Events måste även <see cref="StartDriftavbrottMonitor()"/> anropas.</remarks>
@@ -49,10 +48,6 @@ public class DriftavbrottFacade : IDriftavbrottFacade
         _driftavbrottMonitor.DriftavbrottChanged += (sender, @event) =>
         {
             DriftavbrottChanged?.Invoke(sender, @event);
-        };
-        _driftavbrottMonitor.DriftavbrottError += (sender, @event) =>
-        {
-            DriftavbrottError?.Invoke(sender, @event);
         };
     }
 
@@ -156,7 +151,6 @@ public class DriftavbrottFacade : IDriftavbrottFacade
             while (_driftavbrottMonitorTask is { IsCanceled: false })
             {
             }
-
         }
         catch (AggregateException ae)
         {

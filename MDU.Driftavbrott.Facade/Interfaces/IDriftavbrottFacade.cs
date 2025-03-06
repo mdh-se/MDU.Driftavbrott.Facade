@@ -13,7 +13,6 @@ public interface IDriftavbrottFacade : IDisposable
 {
     internal DriftavbrottFacadeSettings CurrentConfig { get; }
     public event EventHandler<DriftavbrottEventArgs> DriftavbrottChanged;
-    public event EventHandler<DriftavbrottErrorEventArgs> DriftavbrottError;
     Task<IEnumerable<DriftavbrottType>> GetPagaendeDriftavbrottAsync();
 
     public void StartDriftavbrottMonitor();
