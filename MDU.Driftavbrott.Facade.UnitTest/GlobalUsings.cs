@@ -10,4 +10,5 @@ global using SE.MDU.Driftavbrott.Facade.Configuration;
 global using SE.MDU.Driftavbrott.Facade.Events;
 global using SE.MDU.Driftavbrott.Facade.Interfaces;
 global using SE.MDU.Driftavbrott.Modell;
+global using Assert = Xunit.Assert;
 global using Xunit;
