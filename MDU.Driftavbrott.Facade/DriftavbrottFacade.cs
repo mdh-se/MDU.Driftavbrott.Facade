@@ -24,7 +24,7 @@ namespace SE.MDU.Driftavbrott.Facade;
 /// </summary>
 public class DriftavbrottFacade : IDriftavbrottFacade
 {
-    private readonly DriftavbrottFacadeSettings _settings;
+    private DriftavbrottFacadeSettings _settings;
     private ILogger<DriftavbrottFacade> _logger;
     private CancellationTokenSource _monitorCancellationTokenSource;
     private CancellationToken _cancellationToken;
@@ -36,12 +36,13 @@ public class DriftavbrottFacade : IDriftavbrottFacade
 
     /// <summary>Konstruktor som även instansierar DriftavbrottsMonitor</summary>
     /// <remarks>Observera att för att prenumerera på Driftavbrott-Events måste även <see cref="StartDriftavbrottMonitor()"/> anropas.</remarks>
-    public DriftavbrottFacade(IOptions<DriftavbrottFacadeSettings> config, ILogger<DriftavbrottFacade> logger)
+    public DriftavbrottFacade(IOptionsMonitor<DriftavbrottFacadeSettings> config, ILogger<DriftavbrottFacade> logger)
     {
-        ConfigurationValidator.ValidateConfiguration(config.Value);
+        ConfigurationValidator.ValidateConfiguration(config.CurrentValue);
         _monitorCancellationTokenSource = new CancellationTokenSource();
         _cancellationToken = _monitorCancellationTokenSource.Token;
-        _settings = config.Value;
+        _settings = config.CurrentValue;
+        config.OnChange(Listener);
         _logger = logger;
         _logger.Info($"Startar DriftavbrottFacade med konfiguration: Url:'{_settings.Url}', Kanaler:'{string.Join(",",_settings.Kanaler)}', System:'{_settings.System}'");
         _driftavbrottMonitor = new DriftavbrottMonitor(this, _logger);
@@ -49,6 +50,12 @@ public class DriftavbrottFacade : IDriftavbrottFacade
         {
             DriftavbrottChanged?.Invoke(sender, @event);
         };
+    }
+
+    private void Listener(DriftavbrottFacadeSettings obj)
+    {
+        _settings = obj;
+        _logger.Info("Konfigurationen har uppdaterats.");
     }
 
     /// <summary>

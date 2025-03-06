@@ -49,6 +49,7 @@ public class DriftavbrottFacadIntegrationTest
         // act
         var driftavbrott = await testFacade.GetPagaendeDriftavbrottAsync();
 
+        testFacade.Dispose();
         // assert
         foreach (DriftavbrottType driftavbrottType in driftavbrott)
         {
