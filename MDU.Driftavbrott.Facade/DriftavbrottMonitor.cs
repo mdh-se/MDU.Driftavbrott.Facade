@@ -13,7 +13,7 @@ namespace SE.MDU.Driftavbrott.Facade;
 /// <summary>
 /// Monitorerar driftavbrott enligt angiven konfiguration
 /// </summary>
-public class DriftavbrottMonitor
+internal class DriftavbrottMonitor
 {
     private IDriftavbrottFacade _driftavbrottFacade;
     private readonly ILogger<DriftavbrottFacade> _logger;
@@ -23,7 +23,7 @@ public class DriftavbrottMonitor
     /// </summary>
     /// <param name="driftavbrottFacade"><see cref="IDriftavbrottFacade"/></param>
     /// <param name="logger"><see cref="IDriftavbrottFacade"/></param>
-    public DriftavbrottMonitor(IDriftavbrottFacade driftavbrottFacade, ILogger<DriftavbrottFacade> logger)
+    internal DriftavbrottMonitor(IDriftavbrottFacade driftavbrottFacade, ILogger<DriftavbrottFacade> logger)
     {
         _driftavbrottFacade = driftavbrottFacade;
         _logger = logger;
@@ -70,12 +70,12 @@ public class DriftavbrottMonitor
                 }
                 catch (Exception e)
                 {
-                    _logger.Error($"Signalerar fel vid kontroll av driftavbrott.",e);
+                    _logger.Error($"Fel vid kontroll av driftavbrott.",e);
                 }
                 await Task.Delay(TimeSpan.FromSeconds(intervalInSeconds), cancellationToken);
             }
         }
-        catch (TaskCanceledException tce)
+        catch (TaskCanceledException)
         {
             _logger.Info("DriftavbrottMonitor stoppad.");
             throw;

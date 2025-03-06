@@ -22,6 +22,7 @@ namespace SE.MDU.Driftavbrott.Facade;
 /// Facade-klass som används för att fråga efter driftavbrott. Innehåller en publikmetod för att Hämta aktuella driftavbrott för konfigurerade kanaler,
 /// samt en Monitor, som indikerar nya driftavbrott genom att signalera Events
 /// </summary>
+/// <remarks>Observera att för att prenumerera på Driftavbrott-Events måste även <see cref="StartDriftavbrottMonitor()"/> anropas.</remarks>
 public class DriftavbrottFacade : IDriftavbrottFacade
 {
     private DriftavbrottFacadeSettings _settings;
@@ -42,20 +43,31 @@ public class DriftavbrottFacade : IDriftavbrottFacade
         _monitorCancellationTokenSource = new CancellationTokenSource();
         _cancellationToken = _monitorCancellationTokenSource.Token;
         _settings = config.CurrentValue;
-        config.OnChange(Listener);
+        config.OnChange(OnOptionsChanged);
         _logger = logger;
-        _logger.Info($"Startar DriftavbrottFacade med konfiguration: Url:'{_settings.Url}', Kanaler:'{string.Join(",",_settings.Kanaler)}', System:'{_settings.System}'");
+        _logger.Info($"DriftavbrottFacade startar med konfiguration: Url:'{_settings.Url}', Kanaler:'{string.Join(",",_settings.Kanaler)}', System:'{_settings.System}'");
         _driftavbrottMonitor = new DriftavbrottMonitor(this, _logger);
         _driftavbrottMonitor.DriftavbrottChanged += (sender, @event) =>
         {
             DriftavbrottChanged?.Invoke(sender, @event);
         };
+        _logger.Info($"DriftavbrottFacade startad.");
+
     }
 
-    private void Listener(DriftavbrottFacadeSettings obj)
+    private void OnOptionsChanged(DriftavbrottFacadeSettings obj)
     {
-        _settings = obj;
-        _logger.Info("Konfigurationen har uppdaterats.");
+        try
+        {
+            ConfigurationValidator.ValidateConfiguration(obj);
+            _settings = obj;
+            _logger.Debug("Konfigurationen har uppdaterats.");
+        }
+        catch (ArgumentException e)
+        {
+            _logger.Error("Kunde ej uppdatera konfiguration.", e);
+        }
+        
     }
 
     /// <summary>
@@ -68,7 +80,7 @@ public class DriftavbrottFacade : IDriftavbrottFacade
             _driftavbrottMonitorTask = _driftavbrottMonitor.MonitorAsync(_cancellationToken);
         }
     }
-    
+    [Obsolete("Use Dispose() instead.")]
     public void StopDriftavbrottMonitor()
     {
         _monitorCancellationTokenSource.Cancel();
@@ -76,8 +88,9 @@ public class DriftavbrottFacade : IDriftavbrottFacade
     /// <summary>
     /// Hämtar pågående driftavbrott på de kanaler som anges i konfiguration. Om något annat fel inträffar kastas ett ApplicationException.
     /// </summary>
-    /// <returns>Ska endast returnera noll eller ett driftavbrott i praktiken</returns>
-    /// <exception cref="ApplicationException"></exception>
+    /// <returns><see cref="DriftavbrottType"/></returns>
+    /// <remarks>Ska endast returnera noll eller ett driftavbrott i praktiken</remarks>
+    /// <exception cref="ApplicationException">Vid fel vid </exception>
     public async Task<IEnumerable<DriftavbrottType>> GetPagaendeDriftavbrottAsync()
     {
         List<DriftavbrottType> driftavbrottResult = new List<DriftavbrottType>();
@@ -151,10 +164,10 @@ public class DriftavbrottFacade : IDriftavbrottFacade
 
     public void Dispose()
     {
-        _logger.Info("DriftavbrottMonitor stoppas.");
         _monitorCancellationTokenSource.Cancel();
         try
         {
+            // Vänta på att monitor avslutas.
             while (_driftavbrottMonitorTask is { IsCanceled: false })
             {
             }

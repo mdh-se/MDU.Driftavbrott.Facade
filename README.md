@@ -33,14 +33,14 @@ driftavbrottFacade.StartDriftavbrottMonitor();
 
 ```
 
-## Konfigureration
+## Konfiguration
 ````json
 "DriftavbrottFacadeSettings": {
         "Url": "http://integration-linux-dev.ita.mdh.se:3301/mdh-driftavbrott/v1",
         "Kanaler": [
             "ladok.backup"
         ],
-        "System": "Exempel-IC",
+        "System": "MDU.Exempel.IC",
         "MonitorIntervalInSeconds": 60
     }
 ```
