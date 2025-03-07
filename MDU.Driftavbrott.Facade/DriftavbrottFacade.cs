@@ -80,11 +80,6 @@ public class DriftavbrottFacade : IDriftavbrottFacade
             _driftavbrottMonitorTask = _driftavbrottMonitor.MonitorAsync(_cancellationToken);
         }
     }
-    [Obsolete("Use Dispose() instead.")]
-    public void StopDriftavbrottMonitor()
-    {
-        _monitorCancellationTokenSource.Cancel();
-    }
     /// <summary>
     /// Hämtar pågående driftavbrott på de kanaler som anges i konfiguration. Om något annat fel inträffar kastas ett ApplicationException.
     /// </summary>

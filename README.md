@@ -4,7 +4,7 @@ i MDUs integrationskomponenter och applikationer.
 
 En dotnet-facade som kan kommunicera med mdh-driftavbrott-service.
 
-## Användning, konfiguration i appsettings
+## Användning
 
 Här följer ett exempel på lite C#-kod:
 
@@ -20,8 +20,13 @@ Här följer ett exempel på lite C#-kod:
 // Begär instans
 var driftavbrottFacade = host.Services.GetRequiredService<IDriftavbrottFacade>();
 
-// Registrera eventlyssnare
+// eller som parameter till din serviceklass som löses av DependencyInjection av dotnet
+public sealed class ApplicationService(ILogger<ApplicationService> _logger, IDriftavbrottFacade driftavbrottFacade) : BackgroundService
+{
+    ...
+}
 
+// Registrera eventlyssnare
 driftavbrottFacade.DriftavbrottChanged += (sender, dae) =>
         {
             // Hantera driftavbrott här
@@ -30,6 +35,8 @@ driftavbrottFacade.DriftavbrottChanged += (sender, dae) =>
 // Starta monitorering
 driftavbrottFacade.StartDriftavbrottMonitor();
 
+// Det finns även en Task för att fråga efter pågående driftavbrott
+await driftavbrottFacade.GetPagaendeDriftavbrottAsync();
 
 ```
 

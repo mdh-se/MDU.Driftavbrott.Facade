@@ -11,7 +11,7 @@ namespace SE.MDU.Driftavbrott.Facade.IntegrationTest;
 
 public class DriftavbrottFacadIntegrationTest
 {
-    public IDriftavbrottFacade GetTestFacade()
+    public IHost GetTestHost()
     {
         //setup
         var logFilePath = "MDU.Driftavbrott.Facade.IntegrationTest.log";
@@ -37,19 +37,24 @@ public class DriftavbrottFacadIntegrationTest
                 services.Configure<DriftavbrottFacadeSettings>(hostContext.Configuration.GetSection("DriftavbrottFacadeSettings"));
                 services.AddTransient<IDriftavbrottFacade, DriftavbrottFacade>();
             }).Build();
-        
-        return host.Services.GetRequiredService<IDriftavbrottFacade>();
+
+        return host;
     }
     
     [Fact]
     public async Task TestGetPagaendeDriftavbrott()
     {   
         // setup
-        var testFacade = GetTestFacade();
+        var testHost = GetTestHost();
+        await testHost.StartAsync();
+        var testFacade = testHost.Services.GetRequiredService<IDriftavbrottFacade>();
         // act
         var driftavbrott = await testFacade.GetPagaendeDriftavbrottAsync();
 
-        testFacade.Dispose();
+        //testFacade.Dispose();
+        await testHost.StopAsync();
+        
+        
         // assert
         foreach (DriftavbrottType driftavbrottType in driftavbrott)
         {
@@ -58,11 +63,13 @@ public class DriftavbrottFacadIntegrationTest
     }
 
     [Fact]
-    public void TestDriftavbrottMonitor()
+    public async Task TestDriftavbrottMonitor()
     {
         // setup
         List<DriftavbrottEventArgs> eventsList = new List<DriftavbrottEventArgs>();
-        var driftavbrottFacade = GetTestFacade();
+        var testHost = GetTestHost();
+        await testHost.StartAsync();
+        var driftavbrottFacade = testHost.Services.GetRequiredService<IDriftavbrottFacade>();
 
         // act
         driftavbrottFacade.DriftavbrottChanged += (sender, dae) =>
@@ -74,8 +81,10 @@ public class DriftavbrottFacadIntegrationTest
 
         // Vänta 17 sekunder. Vi borde få 1 event under tiden
         SpinWait.SpinUntil(() => eventsList.Count == 2, TimeSpan.FromSeconds(7));
-
-        driftavbrottFacade.Dispose();
+        
+        //driftavbrottFacade.Dispose();
+        await testHost.StopAsync();
+        
         Thread.Sleep(TimeSpan.FromSeconds(3));
         
         // verify

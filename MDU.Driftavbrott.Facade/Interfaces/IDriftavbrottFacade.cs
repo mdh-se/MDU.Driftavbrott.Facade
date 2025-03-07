@@ -16,6 +16,4 @@ public interface IDriftavbrottFacade : IDisposable
     Task<IEnumerable<DriftavbrottType>> GetPagaendeDriftavbrottAsync();
 
     public void StartDriftavbrottMonitor();
-    [Obsolete("Använd Dispose() istället. Denna metod kommer att tas bort i framtida versioner.")]
-    public void StopDriftavbrottMonitor();
 }
