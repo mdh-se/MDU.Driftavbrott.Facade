@@ -164,7 +164,7 @@ public class DriftavbrottFacade : IDriftavbrottFacade
 
     public void Dispose()
     {
-        _monitorCancellationTokenSource.Cancel();
+        _monitorCancellationTokenSource?.Cancel();
         try
         {
             // Vänta på att monitor avslutas.
@@ -178,7 +178,7 @@ public class DriftavbrottFacade : IDriftavbrottFacade
         }
         finally
         {
-            _monitorCancellationTokenSource.Dispose();
+            _monitorCancellationTokenSource?.Dispose();
         }
     }
 }

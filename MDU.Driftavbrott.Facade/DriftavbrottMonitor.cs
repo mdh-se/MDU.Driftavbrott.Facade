@@ -17,7 +17,6 @@ internal class DriftavbrottMonitor
 {
     private IDriftavbrottFacade _driftavbrottFacade;
     private readonly ILogger<DriftavbrottFacade> _logger;
-
     /// <summary>
     /// Konstruktor
     /// </summary>
@@ -32,7 +31,7 @@ internal class DriftavbrottMonitor
     
     internal event EventHandler<DriftavbrottEventArgs> DriftavbrottChanged;
     
-    internal async Task MonitorAsync(CancellationToken cancellationToken, int intervalInSeconds = 60)
+    internal async Task MonitorAsync(CancellationToken cancellationToken)
     {
         DriftavbrottType senasteDriftavbrott = null;
         _logger.Info("DriftavbrottMonitor startad.");
@@ -72,7 +71,7 @@ internal class DriftavbrottMonitor
                 {
                     _logger.Error($"Fel vid kontroll av driftavbrott.",e);
                 }
-                await Task.Delay(TimeSpan.FromSeconds(intervalInSeconds), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(_driftavbrottFacade.CurrentConfig.MonitorIntervalInSeconds), cancellationToken);
             }
         }
         catch (TaskCanceledException)
