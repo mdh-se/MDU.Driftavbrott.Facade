@@ -1,29 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <Version>1.0.0</Version>
-    <PackageId>MDU.Driftavbrott.Facade</PackageId>
-    <Title>MDU.Driftavbrott.Facade</Title>
-    <Company>Mälardalens universitet</Company>
-    <Authors>Edward McNamara, Gustaf Rylander Gerdeman</Authors>
-    <Description>MDU.Driftavbrott.Facade</Description>
-    <PackageTags>dotnet-new;templates;mdu;nuget;</PackageTags>
-    <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>SE.MDU.Driftavbrott.Facade</RootNamespace>
-    <IncludeContentInPack>true</IncludeContentInPack>
-    <IncludeBuildOutput>true</IncludeBuildOutput>
-    <ContentTargetFolders>content</ContentTargetFolders>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MDU.Driftavbrott.Modell" Version="1.6.1" />
-    <PackageReference Include="MDU.Logging.Extensions" Version="1.0.0" />
-    <PackageReference Include="MDU.Util.Xml" Version="1.0.1-build3" />
-    <PackageReference Include="NLog" Version="5.3.4" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="5.3.14" />
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
-  </ItemGroup>
-
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <Version>1.0.1</Version>
+      <PackageId>MDU.Driftavbrott.Facade</PackageId>
+      <Title>MDU.Driftavbrott.Facade</Title>
+      <Company>Mälardalens universitet</Company>
+      <Authors>Edward McNamara, Gustaf Rylander Gerdeman</Authors>
+      <Description>MDU.Driftavbrott.Facade</Description>
+      <PackageTags>dotnet-new;templates;mdu;nuget;</PackageTags>
+      <TargetFramework>net8.0</TargetFramework>
+      <RootNamespace>SE.MDU.Driftavbrott.Facade</RootNamespace>
+      <IncludeContentInPack>true</IncludeContentInPack>
+      <IncludeBuildOutput>true</IncludeBuildOutput>
+      <ContentTargetFolders>content</ContentTargetFolders>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+      <NoWarn>$(NoWarn);NU5128</NoWarn>
+   </PropertyGroup>
+   <ItemGroup>
+      <PackageReference Include="MDU.Driftavbrott.Modell" Version="1.6.1"/>
+      <PackageReference Include="MDU.Logging.Extensions" Version="1.0.0"/>
+      <PackageReference Include="MDU.Util.Xml" Version="1.0.1-build3"/>
+      <PackageReference Include="NLog" Version="5.3.4"/>
+      <PackageReference Include="NLog.Extensions.Logging" Version="5.3.14"/>
+      <None Include="..\README.md" Pack="true" PackagePath="\"/>
+   </ItemGroup>
 </Project>
