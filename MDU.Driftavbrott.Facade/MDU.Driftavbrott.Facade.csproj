@@ -18,9 +18,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MDU.Driftavbrott.Modell" Version="1.6.2-build1" />
+    <PackageReference Include="MDU.Driftavbrott.Modell" Version="1.6.1" />
     <PackageReference Include="MDU.Logging.Extensions" Version="1.0.0" />
-    <PackageReference Include="MDU.Util.Xml" Version="1.0.0" />
+    <PackageReference Include="MDU.Util.Xml" Version="1.0.1-build3" />
     <PackageReference Include="NLog" Version="5.3.4" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.3.14" />
     <None Include="..\README.md" Pack="true" PackagePath="\"/>
