@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using MDU.Logging.Extensions;
+using SE.MDU.Logging.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SE.MDU.Driftavbrott.Facade.Configuration;

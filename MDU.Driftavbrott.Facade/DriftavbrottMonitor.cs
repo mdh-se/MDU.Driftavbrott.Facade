@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MDU.Logging.Extensions;
+using SE.MDU.Logging.Extensions;
 using Microsoft.Extensions.Logging;
 using SE.MDU.Driftavbrott.Facade.Events;
 using SE.MDU.Driftavbrott.Facade.Interfaces;
