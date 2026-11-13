@@ -22,7 +22,7 @@ public class DriftavbrottFacadUnitTest
             .ConfigureLogging((hostContext, logging) =>
             {
                 LogManager.Configuration = new NLogLoggingConfiguration(hostContext.Configuration.GetSection("Logging:NLog"));
-                var fileTarget = (FileTarget)LogManager.Configuration.FindTargetByName("file");
+                var fileTarget = LogManager.Configuration.FindTargetByName("file") as FileTarget;
                 if (fileTarget != null)
                 {
                     fileTarget.FileName = logFilePath;
@@ -101,7 +101,7 @@ public class DriftavbrottFacadUnitTest
             .ConfigureLogging((hostContext, logging) =>
             {
                 LogManager.Configuration = new NLogLoggingConfiguration(hostContext.Configuration.GetSection("Logging:NLog"));
-                var fileTarget = (FileTarget)LogManager.Configuration.FindTargetByName("file");
+                var fileTarget = LogManager.Configuration.FindTargetByName("file") as FileTarget;
                 if (fileTarget != null)
                 {
                     fileTarget.FileName = logFilePath;
