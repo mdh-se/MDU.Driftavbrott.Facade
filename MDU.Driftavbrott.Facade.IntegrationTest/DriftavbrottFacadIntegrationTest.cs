@@ -46,13 +46,13 @@ public class DriftavbrottFacadIntegrationTest
     {   
         // setup
         var testHost = GetTestHost();
-        await testHost.StartAsync();
+        await testHost.StartAsync(TestContext.Current.CancellationToken);
         var testFacade = testHost.Services.GetRequiredService<IDriftavbrottFacade>();
         // act
         var driftavbrott = await testFacade.GetPagaendeDriftavbrottAsync();
 
         //testFacade.Dispose();
-        await testHost.StopAsync();
+        await testHost.StopAsync(TestContext.Current.CancellationToken);
         
         
         // assert
@@ -68,7 +68,7 @@ public class DriftavbrottFacadIntegrationTest
         // setup
         List<DriftavbrottEventArgs> eventsList = new List<DriftavbrottEventArgs>();
         var testHost = GetTestHost();
-        await testHost.StartAsync();
+        await testHost.StartAsync(TestContext.Current.CancellationToken);
         var driftavbrottFacade = testHost.Services.GetRequiredService<IDriftavbrottFacade>();
 
         // act
@@ -83,7 +83,7 @@ public class DriftavbrottFacadIntegrationTest
         SpinWait.SpinUntil(() => eventsList.Count == 2, TimeSpan.FromSeconds(7));
         
         //driftavbrottFacade.Dispose();
-        await testHost.StopAsync();
+        await testHost.StopAsync(TestContext.Current.CancellationToken);
         
         Thread.Sleep(TimeSpan.FromSeconds(3));
         

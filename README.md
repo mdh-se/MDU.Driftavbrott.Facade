@@ -1,5 +1,5 @@
 # MDU.Driftavbrott.Facade
-MDU.Driftavbrott.Facade är en nuget-paket byggt på dotnet 8, C# 12.0, och Microsoft.NET.Sdk SDK för användning 
+MDU.Driftavbrott.Facade är en nuget-paket byggt på dotnet 10, C# 12.0, och Microsoft.NET.Sdk SDK för användning 
 i MDUs integrationskomponenter och applikationer. 
 
 En dotnet-facade som kan kommunicera med mdh-driftavbrott-service.
